@@ -1,0 +1,116 @@
+<html>
+  <head>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,200,300,400,700" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
+    <link href="daterange/jquery.comiseo.daterangepicker.css" rel="stylesheet">
+    <link href="jquery-ui.min.css" rel="stylesheet">
+    <script src="daterange/jquery.comiseo.daterangepicker.js"></script>
+
+    <link href="/c3-0.4.15/c3.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="c3.js"></script>
+    <script src="table2CSV_2.js"></script>
+    <!-- <script src="exportchart.js"></script> -->
+
+    <script type="text/javascript" src="canvg-master/rgbcolor.js"></script>
+    <script type="text/javascript" src="canvg-master/canvg.js"></script>
+    <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  </head>
+  <body>
+<a onclick="show_dialog()"><img class="help" src="question.png" /></a>
+    <div class="filterpanel">
+      <div class="dropdown">
+        <p>Where</p>
+        <select id="region" class="selectpicker" data-actions-box="true" title="UMG Global" onchange="update_data()">
+             <option></option> <option>UMG Global</option> <option>Andorra</option> <option>Argentina</option> <option>Australia</option> <option>Austria</option> <option>Belgium</option> <option>Bolivia</option> <option>Brazil</option> <option>Bulgaria</option> <option>Canada</option> <option>Chile</option> <option>Colombia</option> <option>Costa Rica</option> <option>Cyprus</option> <option>Czech Republic</option> <option>Czechia</option> <option>Denmark</option> <option>Dominican Republic</option> <option>Ecuador</option> <option>El Salvador</option> <option>Estonia</option> <option>Finland</option> <option>France</option> <option>Germany</option> <option>Greece</option> <option>Guatemala</option> <option>Honduras</option> <option>Hong Kong</option> <option>Hungary</option> <option>Iceland</option> <option>Indonesia</option> <option>Ireland</option> <option>Italy</option> <option>Japan</option> <option>Latvia</option> <option>Liechtenstein</option> <option>Lithuania</option> <option>Luxembourg</option> <option>Malaysia</option> <option>Malta</option> <option>Mexico</option> <option>Monaco</option> <option>N/A</option> <option>Netherlands</option> <option>New Zealand</option> <option>Nicaragua</option> <option>Norway</option> <option>Panama</option> <option>Paraguay</option> <option>Peru</option> <option>Philippines</option> <option>Poland</option> <option>Portugal</option> <option>Romania</option> <option>Singapore</option> <option>Slovakia</option> <option>Spain</option> <option>Sweden</option> <option>Switzerland</option> <option>Taiwan</option> <option>Thailand</option> <option>Total</option> <option>Turkey</option> <option>United Kingdom</option> <option>United States</option> <option>Uruguay</option>
+        </select>
+      </div>
+      <div class="dropdown">
+        <p>When</p>
+        <input id="datepicker" name="" value="">
+      </div>
+      <div class="dropdown">
+        <p>Metric</p>
+        <select class="selectpicker" id="metric" data-actions-box="true" title="Click through rate" onchange="update_data()">
+          <option>Click through rate</option> <option>Impressions</option><option>Clicks</option><option>Cost per thousand</option><option>Cost per click</option>
+        </select>
+      </div>
+      <div class="dropdown">
+        <p>By...</p>
+        <select class="selectpicker" id="xaxis" data-actions-box="true" title="Day" onchange="update_data()">
+          <option>Day</option><option>Month</option> <option>Week</option><option>Day of Week</option>
+          <!-- <option>Product</option> -->
+        </select>
+      </div>
+      <div class="dropdown">
+        <p>Search Artist, Project, or Genre</p>
+        <input type="text" id="searchbox" name="" value="">
+        <!-- <button type="button" name="button" onclick="update_data()">Go</button> -->
+        <span id="campaigns"></span>
+      </div>
+      <div class="dropdown" id="productdropdown">
+        <p>Product</p>
+        <select class="selectpicker" id="product" data-actions-box="true" title="All Products" onchange="update_data()">
+          <option>All Products</option>
+        </select>
+      </div>
+    </div>
+
+
+
+    <div class="mainContent">
+      <h3 id="tabletitle"></h3>
+      <div class="table" id="table"></div>
+      <h3 id="charttitle"></h3>
+      <div class="chart_container">
+        <div class="chart" id="chart"></div>
+        <!-- <div class="exporter"><a class="savePNG" onclick="export_svg()"><i class="fa fa-download"></i></a></div> -->
+      </div>
+
+      <!-- <button type="button" name="button" height="70px" width="70px" onclick="export_svg()">Click</button> -->
+
+    </div>
+
+    <div id="window_div">
+      <button class="btn-default" id="exit">X  </button>
+      <h4>Overview</h4>
+      <p>UMG receives free advertising allocation from Spotify as part of our deals.
+        This report is to showcase the results from the campaigns we are running on-platform with this allocation.
+        It does not include reporting on campaigns booked directly with Spotify, only free ones (sometimes called contra). </p>
+      <p><strong>How does this report help?</strong></p>
+      <p>Use this report for pre and post campaign analysis to work out the success of your ad creatives and optimal targeting. </p>
+      <p><strong>What formats are available?</strong></p>
+      <ul>
+        <li>Audio - 30 second + Companion Banner (640x640)</li>
+        <li>Leaderboard - 728x90</li>
+        <li>Billboard (Overlay) - 800x435 + 728x90</li>
+        <li>Video Takeover - 16:9, 15/30 Secs + Companion Banner (640x640)</li>
+        <li>Sponsored Session - 16:9, 15/30 Secs + Companion Banner (640x640)</li>
+        <li>Mobile Overlay - 630x920</li>
+        <li>Homepage Takeover - 1200x270</li>
+      </ul>
+      <p>Learn more about formats: <a href="https://spotifyforbrands.com/us/formats/">Click Here</a></p>
+      <p><strong>Why doesn't CPC/CPM show up for all formats?</strong></p>
+      <p>The data that we receive from Spotify only allows us to reliably report what is available in this tool. CPM data is only available for the formats shown.</p>
+      <p>If you have any questions, please reach out to domo@umusic.com, and we will be happy to help!</p>
+
+    </div>
+
+    <link rel="stylesheet" href="app.css" />
+    <script src="domo.js"></script>
+    <script src="app.js"></script>
+    <script src="app_charts.js"></script>
+  </body>
+</html>

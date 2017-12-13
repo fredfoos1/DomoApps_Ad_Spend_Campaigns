@@ -1,0 +1,232 @@
+body {
+  margin: 0;
+  background-color: #Fff;
+  --main-color: #020e4f;
+  font-family: "Roboto";
+}
+
+.btn-group {
+  margin: 25px 0;
+}
+
+div.tab {
+  float: left;
+  border-right: none;
+  border-bottom: none;
+  border-top: none;
+  width: 12%;
+  height: 100%;
+  background-color: #FCFCFC;
+}
+
+div.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  padding: 15px 8px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.1s;
+  border-right: 1px solid #ddd;
+  font-family: "Roboto";
+  font-weight: 300;
+  color: var(--main-color);
+}
+
+div.tab button.active {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right-color: transparent;
+  background-color: #fff;
+  color: var(--main-color);
+}
+
+.filter_header, .content_filter {
+  float: left;
+  width: 25%;
+}
+
+.tab_row {
+  width: 88%;
+}
+
+.filterpanel {
+  display: none;
+  background-color: #fcfcfc;
+  width: 300px;
+  height: 140%;
+  float: left;
+  min-width: 240px;
+  max-width: 245px;
+  border-right: 1px solid #ddd;
+}
+
+.bootstrap-select>.dropdown-toggle {
+  max-width: 14em;
+}
+
+.bootstrap-select {
+  margin: 5px;
+  margin-left: 10px;
+}
+
+.bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+  width: 230px;
+}
+
+.dropdown {
+  margin: 20px 20px;
+}
+
+.table {
+  max-width: 69%;
+  margin-left: 15px;
+}
+
+.mainContent {
+  height: 120%;
+  background-color: #fff;
+  width: 70%;
+  float: right;
+  padding: 5px 0px;
+  padding-left: 15px;
+}
+
+.form-line-active input:focus, .form-line-active textarea:focus {
+  border: 1px solid green !important;
+  box-shadow: 0 0 3px green !important;
+  -moz-box-shadow: 0 0 3px green !important;
+  -webkit-box-shadow: 0 0 3px green !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline-offset: 0px !important;
+  outline: none !important;
+}
+
+.bootstrap-select>.dropdown-toggle.bs-placeholder, .bootstrap-select>.dropdown-toggle.bs-placeholder:active, .bootstrap-select>.dropdown-toggle.bs-placeholder:focus, .bootstrap-select>.dropdown-toggle.bs-placeholder:hover {
+  color: #333;
+}
+
+table {
+  border: 1px rgb(241, 241, 241);
+  empty-cells: show;
+  width: 100%;
+}
+
+table tbody tr:nth-child(odd) {
+  background-color: rgb(249, 249, 249);
+}
+
+table tbody tr:nth-child(even) {
+  background-color: rgb(253, 253, 253);
+}
+
+table tbody th {
+  background-color: rgb(237, 237, 237) !important;
+  padding: 1.25rem;
+  text-align: right;
+  filter: brightness(1.0) !important;
+  font-weight: 500;
+}
+
+table tbody td {
+  padding: 5px;
+}
+
+table tbody tr td {
+  font-weight: 300;
+  padding: 1rem;
+}
+
+table tbody {
+  font-size: 1.42rem;
+}
+
+td {
+  text-align: right;
+  vertical-align: middle;
+}
+
+h3 {
+  padding: 10px;
+  padding-left: 20px;
+}
+
+.comiseo-daterangepicker-triggerbutton.ui-button {
+  background-color: #fff;
+  color: #333;
+}
+
+.export {
+  font-family: "Roboto";
+  font-weight: 300;
+  margin: 0px;
+  font-size: 13px;
+  width: 100px;
+  height: 35px;
+  border-radius: 4px;
+  margin: 15px;
+  margin-top: 5px;
+}
+
+#searchbox {
+  width: 198px;
+  height: 28px;
+  border-radius: 0px;
+}
+
+.help {
+  padding-left: 5px;
+  float: right;
+  cursor: pointer;
+  position: absolute;
+  right: 70px;
+  top: 20px;
+  /*height: 50px;
+  width: 50px;*/
+}
+
+#window_div{
+  color: var(--main-color);
+  width: 100%;
+  max-width: 800px;
+  height: 500px;
+  position: fixed;
+  top: 20px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: none;
+}
+
+#window_div>h4, #window_div>p{
+	padding: 0px 10px;
+}
+
+.savePNG {
+  margin-left: 40%;
+  top: 15px;
+  right: 15px;
+  color: #777;
+  cursor: pointer;
+}
+
+#productdropdown{
+  display: none;
+}
+
+.indiv_campaign{
+  margin-top: 10px;
+}
+.remove_campaign{
+  width: 25px;
+  height: 20px;
+  line-height: 1px;
+}

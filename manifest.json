@@ -1,0 +1,108 @@
+{
+  "name": "Ad Stats Campaign Stacker",
+  "version": "1.0.0",
+  "fullpage": true,
+  "size": {
+    "width": 6,
+    "height": 4
+  },
+  "mapping": [
+    {
+      "dataSetId": "232f745f-fc4b-44db-8990-ef8c1be119c5",
+      "alias": "dataset",
+      "fields": [
+        {
+        "alias": "date",
+        "columnName": "Date"
+        },
+        {
+        "alias": "item",
+        "columnName": "Line item"
+        },
+        {
+        "alias": "month",
+        "columnName": "Month"
+        },
+        {
+        "alias": "country",
+        "columnName": "Country"
+        },
+        {
+        "alias": "dow",
+        "columnName": "DOW"
+        },
+        {
+        "alias": "week",
+        "columnName": "Week"
+        },
+        {
+        "alias": "clicks",
+        "columnName": "Total clicks"
+        },
+        {
+        "alias": "imp",
+        "columnName": "Total impressions"
+        },
+        {
+        "alias": "product",
+        "columnName": "Product"
+        }
+
+
+      ]
+    },
+    {
+      "dataSetId": "2842017e-516e-4762-a900-22c2c083bb44",
+      "alias": "dataset_cpc",
+      "fields": [
+        {
+        "alias": "date",
+        "columnName": "Date"
+        },
+        {
+        "alias": "item",
+        "columnName": "Line item"
+        },
+        {
+        "alias": "month",
+        "columnName": "Month"
+        },
+        {
+        "alias": "country",
+        "columnName": "Country"
+        },
+        {
+        "alias": "dow",
+        "columnName": "DOW"
+        },
+        {
+        "alias": "week",
+        "columnName": "Week"
+        },
+        {
+        "alias": "clicks",
+        "columnName": "Total clicks"
+        },
+        {
+        "alias": "imp",
+        "columnName": "Total impressions"
+        },
+        {
+        "alias": "cpc",
+        "columnName": "CPC"
+        },
+        {
+        "alias": "cpm",
+        "columnName": "CPM"
+        },
+        {
+        "alias": "product",
+        "columnName": "Product"
+        }
+
+
+      ]
+    }
+  ],
+  "id": "4176ecc8-ff2c-4633-9b5e-dc2cd31adabe"
+}
