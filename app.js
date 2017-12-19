@@ -3,18 +3,28 @@ $(document).ready(function() {
   width = $(window).width();
   $(".mainContent").width(width-260);
 
-  $("#datepicker").on('change', function(event, data) { update_data(); });
+  $("#datepicker").on('change', function(event, data) {
+    //update_data();
+  });
 
   $("#searchbox").on('keydown', _.debounce(function(e) {
-    // if (e.which == 13 && green){
-    //   add_campaign();
-    // }
-    //else {
-        update_data();
-  //  }
+    if (e.which == 13 && green){
+      add_campaign();
+      for (i = campaigns.length-1; i >= 0; i--){
+        if (filter_strings.length < campaigns.length) {
+          console.log(filter_strings[i]);
+          filter_strings.push(create_filter_string(campaigns[i]));
+          update_data(filter_strings[i], campaigns[i]);
+        }
+      }
+    }
+    else {
+        // update_data();
+        check_query();
+    }
 
 
-  }, 500));
+  }, 300));
 
   // Hide help popup window
   $('#exit').click(function() {
@@ -43,13 +53,14 @@ function init_dates(){
     $(".filterpanel").show();
 
     // Init main routine
-    update_data();
+    // update_data();
 
   });
 }
 
 // Global variables
 var filter_string = "";
+var filter_strings = [];
 var selected_region = "Argentina";
 var selected_dates = [];
 var start_date, end_date;
@@ -88,32 +99,48 @@ var dow_sorter = {
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 var campaigns = [];
 var campaigns_display = [];
+var DataSet = [];
+var campaign_data_mapping = [];
+var products = [];
+var distinct_campaigns = [];
 
 // Main routine
-function update_data(){
-
-  // Step 1 - Get Selection
-  filter_string = create_filter_string();
+function update_data(filter, cam){
 
   // Step 2 - Get Data
-  domo.get(filter_string).then(function(data){
+  domo.get(filter).then(function(data){
     console.log(data);
+    data.forEach(function(d){
+      DataSet.push(d);
+      campaign_data_mapping.push(cam);
+    });
 
-    highlight_search(data); // UI for searchbox
-
-    if (show){
       // Step 3 - Process data
-      data = process_data(data);
+      DataSet = process_data(DataSet);
 
       // Step 4 - Display data
       create_table_title();
-      create_table(data);
-      create_chart(data);
-
+      if (campaigns.length > 1) {
+        add_products(DataSet);
+        get_distinct_campaigns(DataSet);
+        create_table_campaigns(DataSet);
+      }
+      else{
+        create_table(DataSet);
+        create_chart(DataSet);
+      }
+console.log(campaigns, campaign_data_mapping, DataSet);
       add_export_buttons();
-
-    }
   });
+}
+
+function update_charts(){
+
+      // Display data
+      ////create_table_title();
+      create_table_campaigns(DataSet);
+      //create_chart(DataSet);
+
 }
 
 function highlight_search(data){
@@ -142,7 +169,7 @@ function highlight_search(data){
   }
 }
 
-function create_filter_string(){
+function create_filter_string(y){
 
   selected_region = get_selected_region();
   selected_dates = get_selected_dates();
@@ -150,7 +177,7 @@ function create_filter_string(){
   selected_metric = get_selected_metric();
   selected_x = get_selected_x();
   selected_x_display = get_selected_x_display();
-  selected_y = get_selected_y();
+  //selected_y = get_selected_y();
   requested_fields = get_requested_fields();
   var grouped_by = get_groupedby();
 
@@ -163,8 +190,8 @@ function create_filter_string(){
   else filter += "&filter=";
   //filter += ",date in [" + selected_dates +"]";
   filter += "date " + selected_dates +"";
-  if (selected_y.length > 0 && campaigns.length <= 1) filter += ",item contains " + selected_y +"";
-  if (selected_y.length > 0 && campaigns.length > 1) filter += ",item contains " + selected_y +"";
+  filter += ",item contains " + y +"";
+  // filter += ",item contains " + selected_y +"";
   filter += "&groupby=" + grouped_by;
 
   console.log(filter);
@@ -213,7 +240,7 @@ function get_groupedby(){
   if (selected_region != "UMG Global") gb = "country,";
   gb += selected_x;
   gb += ",product" ;
-  if (campaigns.length > 1) gb += ",item";
+  gb += ",item";
   if (selected_metric == "cpm") gb += "," + selected_metric;
   if (selected_metric == "imp,clicks,cpm")  gb += ",cpm" ;
   return gb;
@@ -221,7 +248,7 @@ function get_groupedby(){
 function get_requested_fields(){
   // Get Product, X, and Metric from API call
   rf = ["product"];
-  if (campaigns.length > 1) rf.push("item");
+  rf.push("item");
   rf.push(selected_x);
   rf.push(selected_metric);
   return rf;
@@ -232,6 +259,9 @@ function get_selected_y(){
 }
 function get_selected_product(){
   return $('#product').selectpicker('val');
+}
+function get_selected_campaign(){
+  return $('#campaigns_dropdown').selectpicker('val');
 }
 
 function flatten(arr) {
@@ -268,15 +298,29 @@ function create_table_title(){
 }
 
 function process_data(data){
-  if (selected_x == "week") for (i = 0; i < data.length; i++) data[i].week = convert_week(data[i].week);
+  if (selected_x == "week") {
+    for (i = 0; i < data.length; i++){
+      if (data[i].processed == undefined) data[i].week = convert_week(data[i].week);
+    }
+  }
   //if (selected_x == "month") for (i = 0; i < data.length; i++) data[i].month = convert_month(data[i].month);
-  if (selected_x == "date") for (i = 0; i < data.length; i++) data[i].date = convert_day(data[i].date);
+  if (selected_x == "date") {
+    for (i = 0; i < data.length; i++){
+      if (data[i].processed == undefined) data[i].date = convert_day(data[i].date);
+    }
+  }
   if (selected_metric == "imp,clicks,cpm"){
     data.forEach((e) => {
-      e.cpc = e.imp * e.cpm / (1000 * e.clicks);
-      e.paid = e.imp * e.cpm / (1000);
+      if (e.processed == undefined){
+        e.cpc = e.imp * e.cpm / (1000 * e.clicks);
+        e.paid = e.imp * e.cpm / (1000);
+      }
     });
   }
+  data.forEach((e, i) => {
+    e.processed = true;
+    e.campaign_search = campaign_data_mapping[i];
+  });
   return data;
 }
 
@@ -497,17 +541,148 @@ function remove_campaign(c){
   campaign_string = c.id.slice(8,c.id.length);
 
   // remove from campaigns array
-  remove_from_array(campaigns, campaign_string);
+  remove_campaign_from_array(campaigns, campaign_string);
 
-  // remove from UI and update
+  // remove from UI
   display_campaigns();
-  update_data();
+
+  // remove data from stored objects
+  var dataset = [];
+  var cdm = [];
+
+  for (j = 0; j < campaign_data_mapping.length; j++) {
+    if(campaign_string != campaign_data_mapping[j]) {
+      dataset.push(DataSet[j]);
+      cdm.push(campaign_data_mapping[j]);
+    }
+  }
+
+  DataSet = dataset;
+  campaign_data_mapping = cdm;
+
+  // Step 4 - Display data
+  create_table_title();
+  if (campaigns.length > 1) {
+
+  }
+  else{
+    create_table(DataSet);
+    create_chart(DataSet);
+  }
+console.log(campaigns, campaign_data_mapping, DataSet);
+  add_export_buttons();
+}
+
+function remove_campaign_from_array(array, element) {
+    const index = array.indexOf(element);
+    if (index !== -1) {
+        array.splice(index, 1);
+        campaigns_display.splice(index, 1);
+        filter_strings.splice(index, 1);
+    }
 }
 
 function remove_from_array(array, element) {
     const index = array.indexOf(element);
     if (index !== -1) {
         array.splice(index, 1);
-        campaigns_display.splice(index, 1);
     }
+}
+
+function check_query(){
+  y = get_selected_y();
+  fs = create_filter_string(y);
+  domo.get(fs).then(function(d){
+    if (d.length > 0) highlight_search(d);
+  });
+}
+
+function add_products(d){
+  products = get_common_products(d);
+  add_products_to_UI();
+}
+
+function get_distinct_campaigns(d){
+  dc = [];
+  for (i = 0; i < d.length; i++){
+    if (dc.indexOf(d[i].item) < 0) dc.push(d[i].item);
+  }
+  distinct_campaigns = dc;
+  add_campaigns_to_UI();
+}
+
+function countInArray(array, what) {
+    var count = 0;
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === what) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function get_common_products(d){
+  // Isolate similar products across all campaigns
+  cur_c = campaign_data_mapping[0];
+  p_df = [];
+  cur_row = 0;
+  cur_c_p = [];
+  p = [];
+
+  for (i = 0; i < campaign_data_mapping.length; i++){
+    if (campaign_data_mapping[i] != cur_c) {
+      cur_row++;
+      cur_c_p = [];
+    }
+
+    if (cur_row == 0) {
+      if (p_df.indexOf(d[i].product) < 0) p_df.push(d[i].product);
+    }
+    if (cur_row > 0) {
+      if (p_df.indexOf(d[i].product) >= 0 && cur_c_p.indexOf(d[i].product) < 0) {
+        cur_c_p.push(d[i].product);
+        p_df.push(d[i].product);
+      }
+    }
+    cur_c = campaign_data_mapping[i];
+  }
+
+  for (i = 0; i < p_df.length; i++){
+    if (countInArray(p_df, p_df[i]) == campaigns.length) {
+      if (p.indexOf(p_df[i]) < 0) p.push(p_df[i]);
+    }
+  }
+  console.log(p, p_df);
+  return p;
+}
+
+function add_products_to_UI(){
+  $('#product')
+    .find('option')
+    .remove()
+    .end()
+    .append('<option value="All Products">All Products</option>');
+
+  for (i=0; i<products.length; i++){
+    $("#product").append($('<option>', {
+      value: products[i],
+      text: products[i]
+    }));
+  }
+  $("#product").selectpicker("refresh");
+}
+
+function add_campaigns_to_UI(){
+  $('#campaigns_dropdown')
+    .find('option')
+    .remove()
+    .end();
+
+  for (i=0; i<distinct_campaigns.length; i++){
+    $("#campaigns_dropdown").append($('<option>', {
+      value: distinct_campaigns[i],
+      text: distinct_campaigns[i]
+    }));
+  }
+  $("#campaigns_dropdown").selectpicker("refresh");
 }
